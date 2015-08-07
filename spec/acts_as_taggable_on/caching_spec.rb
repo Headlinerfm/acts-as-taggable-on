@@ -75,6 +75,20 @@ describe 'Acts As Taggable On' do
       CachedModel.reset_column_information
       expect(CachedModel.instance_variable_get(:@acts_as_taggable_on_cache_columns)).to eql(nil)
     end
+
+    context 'with custom delimiter' do
+      before(:each) do
+        @default_delimiter = ActsAsTaggableOn.delimiter
+        ActsAsTaggableOn.delimiter = '#'
+      end
+      after(:each) do
+        ActsAsTaggableOn.delimiter = @default_delimiter
+      end
+      it 'should use custom delimiter in the cached list' do
+        @taggable.update_attributes(:tag_list => ['awesome', 'epic'])
+        expect(@taggable.cached_tag_list).to eql('awesome# epic')
+      end
+    end
   end
 
   describe 'CachingWithArray' do
